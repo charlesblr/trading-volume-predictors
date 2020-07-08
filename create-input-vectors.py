@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from math import *
 
 df_stock_data = pd.read_csv("US1.GILD_200101_200701.csv") # Starts at index 0
 
@@ -17,7 +18,7 @@ W = np.zeros(shape=(length-50, 25))
 for minute in range(0, length-50):
 	for counter_col, col in enumerate(columns_of_interest):
 		for counter_offset, offset in enumerate([0, 10, 20, 30, 40]):
-			delta = df_stock_data[col].iloc[minute+10+offset] - df_stock_data[col].iloc[minute+offset]
+			delta = log(df_stock_data[col].iloc[minute+10+offset]) - log(df_stock_data[col].iloc[minute+offset])
 			W[minute][counter_offset+counter_col*5] = delta
 
 print(W[0])
