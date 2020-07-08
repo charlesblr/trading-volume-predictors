@@ -60,11 +60,37 @@ model.add(Dense(n_features))
 
 model.compile(optimizer='adam', loss='mse')
 
-model.fit(X_train, y_train, epochs=2, verbose=2)
+model.fit(X_train, y_train, epochs=20, verbose=2)
 
-# Check prediction 
+# Plot the volume prediction for the 10 first minutes of the 50-minute-window
+# i.e given that we used the logarithm 
+# a positive number signifies a increase in the trading volume
+# - negative ------------------ decrease ---------------------
+# And check the right direction of the evolution of the trading volume
 
 y_hat = model.predict(X_test, verbose=2)
 
-print(y_hat)
+percentage_true_sign = sum(np.sign(y_hat[:,0]) == np.sign(y_test[:,0])) / np.shape(y_test)[0]
+
+exact = 0
+for i in range(0, np.shape(y_test)[0]):
+	if round(y_hat[i,0], 6) == round(y_test[i,0], 6):
+		exact += 1
+
+percentage_true = exact / np.shape(y_test)[0]
+
+print("percentage in good direction is : {}".format(percentage_true_sign))
+print("percentage exactly matching (with e-3 precision) is : {}".format(percentage_true))
+
+squared_err = [(y_hat[i,0] - y_test[i,0])**2 for i in range(np.shape(y_test)[0])]
+
+plt.figure()
+plt.plot(y_hat[:,0], 'b')
+plt.plot(y_test[:,0], 'g')
+
+plt.figure()
+plt.plot(squared_err, 'r')
+
+plt.show()
+
 
